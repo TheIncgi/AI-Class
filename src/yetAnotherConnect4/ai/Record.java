@@ -1,7 +1,5 @@
 package yetAnotherConnect4.ai;
 
-import static org.junit.Assume.assumeNoException;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -45,13 +43,13 @@ public class Record {
 	}
 	
 	public INDArray toSingleLiveINDArray(Player me) {
-		INDArray out = Nd4j.zeros(new int[] {moves.size()+1, 9});
+		INDArray out = Nd4j.zeros(new int[] {1, 9, moves.size()+1});
 		//System.out.println(out.shape());
 		for (int i = 1; i <= moves.size(); i++) {
 			boolean a= startingPlayer.equals(me);
-			out.putScalar(new int[] {i, 0}, a?1:0);
-			out.putScalar(new int[] {i, 1}, a?0:1);
-			out.putScalar(new int[] {i, 2+moves.get(i-1)}, 1); //TODO checkme
+			out.putScalar(new int[] {1, 0, i}, a?1:0);
+			out.putScalar(new int[] {1, 1, i}, a?0:1);
+			out.putScalar(new int[] {1, 2+moves.get(i-1), i}, 1); //TODO checkme
 		}
 		return out;
 	}

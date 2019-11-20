@@ -54,7 +54,7 @@ public class ConsoleUI {
 
 		game = new GameManager() ;
 		game.init();
-		drawBoardFromScratch(game);
+		drawBoardFromScratch(game, null);
 		
 		Scanner in = new Scanner(System.in);
 		Win winner = null;
@@ -63,7 +63,7 @@ public class ConsoleUI {
 				game.doTurn(in.nextInt()-1);
 			}catch (Exception e) {
 			}
-			drawBoardFromScratch(game);
+			drawBoardFromScratch(game, null);
 			winner = game.getBoard().checkWinner();
 		}while(winner == null);
 		switch (winner.getPlayer()) {
@@ -82,7 +82,7 @@ public class ConsoleUI {
 	}
 
 
-	public static void drawBoardFromScratch(GameManager gm) {
+	public static void drawBoardFromScratch(GameManager gm, String[] sidebarRight) {
 		Board c4 = gm.getBoard();
 		Win win = c4.checkWinner(true);
 		System.out.print( ansi().eraseScreen() );
@@ -96,7 +96,7 @@ public class ConsoleUI {
 		System.out.println(ansi().fg(WHITE).a("╓┴╥┴╥┴╥┴╥┴╥┴╥┴╖").reset());
 		for(int y = 5; y>=0; y--) {
 			int x = 0;
-			System.out.printf("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n",
+			System.out.printf("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s  %s\n",
 					d,
 					tile(c4.getSlot(x, y), h(win, x++, y)), d,
 					tile(c4.getSlot(x, y), h(win, x++, y)), d,
@@ -104,7 +104,8 @@ public class ConsoleUI {
 					tile(c4.getSlot(x, y), h(win, x++, y)), d,
 					tile(c4.getSlot(x, y), h(win, x++, y)), d,
 					tile(c4.getSlot(x, y), h(win, x++, y)), d,
-					tile(c4.getSlot(x, y), h(win, x++, y)), d
+					tile(c4.getSlot(x, y), h(win, x++, y)), d,
+					sidebarRight!=null && sidebarRight.length > 6-y? sidebarRight[6-y] : ""
 					);
 			if(y>0)
 				System.out.println(ansi().fg(WHITE).a("╟─╫─╫─╫─╫─╫─╫─╢").reset());

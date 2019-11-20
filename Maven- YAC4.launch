@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.ui.externaltools.ProgramLaunchConfigurationType">
+<stringAttribute key="bad_container_name" value="\AI Class\e"/>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="${system_path:cmd.exe}"/>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_TOOL_ARGUMENTS" value="/C &quot;start ${system_path:cmd.exe} /K &quot;C:\Users\TheIncgi\Programs\apache-maven-3.6.2\bin\mvn exec:java -Dexec.mainClass=&quot;yetAnotherConnect4.ui.Main&quot;"/>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_WORKING_DIRECTORY" value="${workspace_loc:/AI Class}"/>
+</launchConfiguration>

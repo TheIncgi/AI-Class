@@ -6,22 +6,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel.MapMode;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.Ansi.Color;
-import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.dataset.api.DataSetPreProcessor;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
-import org.nd4j.linalg.factory.Nd4j;
 
 public class GameHistory {
 	File index, data;
@@ -105,6 +100,7 @@ public class GameHistory {
 
 	public class HistoryItterator implements DataSetIterator {
 		int pointer = 0;
+		long startedAt;
 		@Override
 		public boolean hasNext() {
 			return pointer < size;
@@ -119,10 +115,22 @@ public class GameHistory {
 			}catch (IOException e) {
 				throw new RuntimeException(e);
 			}
+			String est = "";
+			if(pointer==0) startedAt = System.currentTimeMillis();
+			else {
+				
+				long elapsed = System.currentTimeMillis() - startedAt;
+				elapsed = (long) ((elapsed / ((float)pointer/size)-elapsed) / 1000);
+				int seconds = (int) (elapsed % 60); elapsed/=60;
+				int min = (int) (elapsed % 60); elapsed/=60;
+				int hour = (int) elapsed;
+				est = String.format(Ansi.ansi().boldOff().fgYellow().a("Est: ").bold().fgBrightYellow().a("%d:%02d:%02d").reset().toString(),
+						hour, min, seconds);
+			}
 			if(pointer%(size/100)==0) {
 				Instant now = Instant.now();
 				Calendar c = Calendar.getInstance();
-				System.out.printf("[%2d:%02d:%02d %s] - %6.2f%%\n", c.get(Calendar.HOUR), c.get(Calendar.MINUTE), c.get(Calendar.SECOND), c.get(Calendar.AM_PM)==Calendar.AM?"am":"pm", (100*pointer/(float)size));
+				System.out.printf(Ansi.ansi().bold().fgCyan().a("[%2d:%02d:%02d %s] - %6.2f%% %s\n").reset().toString(), c.get(Calendar.HOUR), c.get(Calendar.MINUTE), c.get(Calendar.SECOND), c.get(Calendar.AM_PM)==Calendar.AM?"am":"pm", (100*pointer/(float)size), est);
 			}
 			pointer++;
 			return dataset;
@@ -133,10 +141,6 @@ public class GameHistory {
 			return null;
 		}
 
-		@Override
-		public int totalExamples() {
-			return size;
-		}
 
 		@Override
 		public int inputColumns() {
@@ -155,7 +159,7 @@ public class GameHistory {
 
 		@Override
 		public boolean asyncSupported() {
-			return false;
+			return true;
 		}
 
 		@Override
@@ -167,17 +171,7 @@ public class GameHistory {
 		public int batch() {
 			return 1;
 		}
-
-		@Override
-		public int cursor() {
-			return pointer;
-		}
-
-		@Override
-		public int numExamples() {
-			return 2;
-		}
-
+	
 		@Override
 		public void setPreProcessor(DataSetPreProcessor preProcessor) {
 			throw new RuntimeException("unimplemented");
