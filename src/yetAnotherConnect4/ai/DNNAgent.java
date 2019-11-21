@@ -29,7 +29,7 @@ import yetAnotherConnect4.Player;
 import yetAnotherConnect4.ui.Main;
 
 public class DNNAgent implements Agent{
-	private int HIDDEN_WIDTH = 25;
+	private int HIDDEN_WIDTH = 60;
 	MultiLayerNetwork network;
 
 
@@ -53,6 +53,11 @@ public class DNNAgent implements Agent{
 				.layer(i++, new LSTM.Builder()
 						.activation(Activation.TANH)
 						.nIn(9)
+						.nOut(HIDDEN_WIDTH)
+						.build())
+				.layer(i++, new LSTM.Builder()
+						.activation(Activation.TANH)
+						.nIn(HIDDEN_WIDTH)
 						.nOut(HIDDEN_WIDTH)
 						.build())
 				.layer(i++, new LSTM.Builder()
