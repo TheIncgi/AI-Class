@@ -86,6 +86,36 @@ public class Record {
 		}
 		return out;
 	}
+	
+	public int appendInputExamples(INDArray ind, int exNum) {
+		Player x = startingPlayer;
+		for(int i = 1; i<=moves.size(); i++) {
+			boolean a= x.equals(startingPlayer);
+			//self prespective
+			ind.putScalar(new int[]{exNum, 0, i},  a?1:0);
+			ind.putScalar(new int[]{exNum, 1, i}, !a?1:0);
+			ind.putScalar(new int[]{exNum, 2+moves.get(i-1), i}, 1);
+			//not self
+			ind.putScalar(new int[]{exNum+1, 0, i}, !a?1:0);
+			ind.putScalar(new int[]{exNum+1, 1, i},  a?1:0);
+			ind.putScalar(new int[]{exNum+1, 2+moves.get(i-1), i}, 1);
+			x = x.next();
+		}
+		return exNum+2;
+	}
+	public int appendLabelExamples(INDArray ind, int lbNum) {
+		for(int i = 1; i <= moves.size(); i++) {
+			if(winner.isNone()) {
+				ind.putScalar(new int[]{lbNum, 1, i}, 1);
+				ind.putScalar(new int[]{lbNum+1, 1, i}, 1);
+			}else {
+				boolean me = winner.equals(startingPlayer);
+				ind.putScalar( new int[] {lbNum, me?0:2, i}, 1);
+				ind.putScalar( new int[] {lbNum+1, me?2:0, i}, 1);
+			}
+		}
+		return lbNum+2;
+	}
 
 	public Player getStartingPlayer() {
 		return startingPlayer;
